@@ -1,29 +1,50 @@
 import random
 
 
-class Enemy:
-    def __init__(self, name, hp=50):
+class Crafting:
+    def __init__(self, name):
         self.name = name
-        self.hp = hp
+        self.inventory=["Stick", "Rope"]
 
-    def is_alive(self):
-        return self.hp > 0
+    def show_recipes(self):
+        print("Here is a list of craftible items:")
+        print("")
+        print("1. Wooden Sword - Does up to 15 damage")
+        print("     - Stick x1")
+        print("     - Rope x1")
+        print("")
+        print("2. Wooden Shield - Gives you a 50:50 chance of defending an attack")
+        print("     - Stick x2")
+        print("     - Rope x1")
+        print("")
+        print("3. Forged Longsword - Does up to 20 damage")
+        print("     - Iron ingot x1")
+        print("     - Rope x1")
+        print("")
 
-    def attack(self, character):
-        damage = random.randint(5, 10)
-        print(f"{self.name} attacks {character.name} for {damage} damage!")
-        print("\nDo you wish to take the damage or try and defend?")
-        print("1. take damage")
-        print("2. Try and defend")
-        choice = input("Choose your action: ")
-        if choice == '1':
-            character.take_damage(damage)
-        elif choice == '2':
-            print(f"{character.name} defends the attack!")
-        else:
-            print("Invalid action. Please choose 1 or 2.")
+    def show_items(self):
+        print("These are the items in your inventory")
+        print("")
+        print(self.inventory)
+
+    def level1(self):
+        player.add_item(Item("Wooden Sword", "A basic wooden sword."))
+        print("Success!")
+        print("A Wooden Sword was added to your invertory")
+
+    def level2(self):
+        player.add_item(Item("Wooden Shield", "A basic wooden shield"))
+        print("Success!")
+        print("A Wooden Shield was added to your invertory")
+
+    def level3(self):
+        player.add_item(Item("Forged Longsword", "A forged sword for intense attacks"))
+        print("Success!")
+        print("A Forged Longsword was added to your invertory")
+
+    
 
 
-    def take_damage(self, damage):
-        self.hp -= damage
-        print(f"{self.name} takes {damage} damage! (HP: {self.hp})")
+
+player = Crafting("lucia")
+player.level1()
