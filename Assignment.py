@@ -164,7 +164,7 @@ class WoodenShield(Defence): # wooden shield
             print(f"{player.name} defends the attack!")
         else:
             print("You failed to defend the attack!")
-
+            return False
 
 # Class for any enemys in the game
 class Enemy:
@@ -244,12 +244,13 @@ class Troll(Enemy): # Troll enemy - meadium level
     def attack(self, character): # Troll attacks the player
         damage = random.randint(10, 15)
         print(f"{self.name} attacks {character.name} for {damage} damage!")
+        defended = False
         for item in character.weapon_inventory: # If the player has a shield
             if isinstance(item, WoodenShield):
-                item.defend(character)
+                defended = item.defend(character)
                 break
-            else:
-                character.take_damage(damage)
+        if not defended:
+            character.take_damage(damage)
 
 
         '''print("\nDo you wish to try and defend?")
