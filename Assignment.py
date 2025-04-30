@@ -70,12 +70,12 @@ class Character:
 
     def show_equipped_items(self): # Displays items that the player has equipped
         if self.equipped_weapon is None:
-            print("No wepon equipped") # If there are no weapons equipped
+            print("No weapon equipped") # If there are no weapons equipped
         else:
             print(f"\nYou curently have {self.equipped_weapon} equipped")
         
-        if self.defence_item is None:
-            print("No defencive item equipped") # If there are no defensive items equipped
+        if len(self.defence_item) == 0:
+            print("No defensive item equipped") # If there are no defensive items equipped
         else:
             print(f"You currently have {self.defence_item} equipped")
     
@@ -366,7 +366,7 @@ class Zombie(Enemy): # Zombie enemy - easy level
         print("\nThe zombie has dropped some items:")
         rarity = random.randint(1,4)
         if rarity == 1:
-            print("\Zombie Leg")
+            print("\nZombie Leg")
             print("Zombie Snot")
             print("\n1. Inspect items") # Inspect, accept or decline items
             print("2. Accept items")
