@@ -1,50 +1,44 @@
 import random
 
-
-class Crafting:
-    def __init__(self, name):
+class Item:
+    def __init__(self, name, description=""):
         self.name = name
-        self.inventory=["Stick", "Rope"]
+        self.description = description
 
-    def show_recipes(self):
-        print("Here is a list of craftible items:")
-        print("")
-        print("1. Wooden Sword - Does up to 15 damage")
-        print("     - Stick x1")
-        print("     - Rope x1")
-        print("")
-        print("2. Wooden Shield - Gives you a 50:50 chance of defending an attack")
-        print("     - Stick x2")
-        print("     - Rope x1")
-        print("")
-        print("3. Forged Longsword - Does up to 20 damage")
-        print("     - Iron ingot x1")
-        print("     - Rope x1")
-        print("")
-
-    def show_items(self):
-        print("These are the items in your inventory")
-        print("")
-        print(self.inventory)
-
-    def level1(self):
-        player.add_item(Item("Wooden Sword", "A basic wooden sword."))
-        print("Success!")
-        print("A Wooden Sword was added to your invertory")
-
-    def level2(self):
-        player.add_item(Item("Wooden Shield", "A basic wooden shield"))
-        print("Success!")
-        print("A Wooden Shield was added to your invertory")
-
-    def level3(self):
-        player.add_item(Item("Forged Longsword", "A forged sword for intense attacks"))
-        print("Success!")
-        print("A Forged Longsword was added to your invertory")
-
+    def __str__(self):
+        return f"{self.name}: {self.description}" if self.description else self.name
     
+    def __eq__(self, other):
+        return isinstance(other, Item) and self.name == other.name and self.description == other.description
+
+    def __hash__(self):
+        return hash((self.name, self.description))
+
+class Character:
+    def __init__(self, name, hp=100):
+        self.name = name
+        self.hp = hp
+        self.inventory = []  # Inventory now holds Item objects
+
+    def add_item(self, item):
+        self.inventory.append(item)
+
+    def remove_item(self, item):
+        self.inventory.remove(item)
 
 
+def save_data(self):
+    with open("player_data.txt", "w") as file:
+        file.write("Player data")
+        file.write(f"\nname: {player.name}")
+        file.write(f"\nhp: {player.hp}")
+        for item in self.inventory:
+            file.write(f"\ninventory: {item}")
 
-player = Crafting("lucia")
-player.level1()
+player = Character("lucia")
+player.add_item(Item("Stick", "For crafting"))
+player.add_item(Item("Rope", "For crafting"))
+player.add_item(Item("Rope", "For crafting"))
+
+save_data(player)
+

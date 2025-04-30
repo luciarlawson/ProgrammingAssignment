@@ -1,0 +1,6 @@
+Player data
+name: lucia
+hp: 100
+inventory: Stick: For crafting
+inventory: Rope: For crafting
+inventory: Rope: For crafting
