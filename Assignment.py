@@ -129,8 +129,8 @@ class ForgedLongsword(Weapon): # Forged longsword
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
     
-class SmallKnife(Weapon): # small knife --------------------------------------------------------------------------------------------------------
-    def __init__(self, name="Small Knife", damage=5, description="weapon"): # Small amount of damage but you throw multiple in one attack
+class SmallKnife(Weapon): # Small Knife
+    def __init__(self, name="Small Knife", damage=4, description="weapon"): # Small amount of damage but you throw 5 in one attack
         super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
@@ -241,16 +241,16 @@ class Goblin(Enemy): # Goblin enemy - hardest level
         print("You have defeated all the enemys")
         print(f"Congratulations {player.name}!!")
         print("\nYour reward for defeating all three wild enemies is a rare trophy")
-        print("   ___________")
-        print("  '._==_==_=_.'")
-        print("  .-\:      /-.")
-        print(" | (|:.     |) |")
-        print("  '-|:.     |-'")
-        print("    \::.    /")
-        print("     '::. .'")
-        print("       ) (")
-        print("     _.' '._")
-        print("    """"""""")
+        print("       ___________")
+        print("      '._==_==_=_.'")
+        print("      .-\:      /-.")
+        print("     | (|:.     |) |")
+        print("      '-|:.     |-'")
+        print("        \::.    /")
+        print("         '::. .'")
+        print("           ) (")
+        print("         _.' '._")
+        print("        """"""""")
 
 class Troll(Enemy): # Troll enemy - meadium level
     def __init__(self, name="troll", hp=30):
@@ -273,8 +273,8 @@ class Troll(Enemy): # Troll enemy - meadium level
 
     def enemy_drop(self, player): # Troll drops items when you defeat it (add random chance items) ---------------------------------------------------------------------
         print("\nThe troll has dropped some items:")
-        rarity = random.randint(1,8)
-        if rarity == 1:
+        rarity = random.randint(1,8) # Accounts for diferent item rarity
+        if rarity == 1: # 1 in 8 chance
             print("\nTroll Socks")
             print("Spiked Club")
             print("\n1. Inspect items") # Inspect, accept or decline items
@@ -294,7 +294,7 @@ class Troll(Enemy): # Troll enemy - meadium level
                     break
                 else:
                     print("\nInvalid choice")
-        elif rarity == 2 or rarity == 3 or rarity == 4:
+        elif rarity == 2 or rarity == 3 or rarity == 4: # 3 in 8 chance
             print("\nTroll Eyballs")
             print("Spiked Club")
             print("\n1. Inspect items") # Inspect, accept or decline items
@@ -314,7 +314,7 @@ class Troll(Enemy): # Troll enemy - meadium level
                     break
                 else:
                     print("\nInvalid choice")
-        else:
+        else: # 4 in 8 chance
             print("\nRock")
             print("Spiked Club")
             print("\n1. Inspect items") # Inspect, accept or decline items
