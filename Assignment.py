@@ -23,7 +23,7 @@ class Character:
         self.craft_inventory = []  # Craft inventory now holds Item objects
         self.weapon_inventory = [] # Weapon now holds weapon objects
         self.equipped_weapon = None # No wepons equipped initialy
-        self.defence_item = None # No defensive items eqipped initialy
+        self.defence_item = [] # No defensive items eqipped initialy
 
     def is_alive(self): # Returs weather the player is alive or not
         return self.hp > 0
@@ -81,9 +81,10 @@ class Character:
     
 # Class for all weapons
 class Weapon:
-    def __init__(self, name="", damage=0):
+    def __init__(self, name="", damage=0, description=""):
         self.name = name
         self.damage = damage
+        self.description = description
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
@@ -94,9 +95,10 @@ class Weapon:
 
 # Class for defensive items
 class Defence:
-    def __init__(self, name="", damage=0):
+    def __init__(self, name="", damage=0, description=""):
         self.name = name
         self.damage = damage
+        self.description = description
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
@@ -107,53 +109,83 @@ class Defence:
 
 
 class BareHands(Weapon): # Bare hands weapon - all players start with this
-    def __init__(self, name="Bare Hands", damage=10): # Has the least amount of damage
-        super().__init__(name, damage)
+    def __init__(self, name="Bare Hands", damage=5, description="weapon"): # Has the least amount of damage
+        super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
 
 class WoodenSword(Weapon): # A basic wooden sworn
-    def __init__(self, name="Wooden Sword", damage=random.randint(10, 15)):
-        super().__init__(name, damage)
+    def __init__(self, name="Wooden Sword", damage=random.randint(5, 10), description="weapon"):
+        super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
 
 class ForgedLongsword(Weapon): # Forged longsword
-    def __init__(self, name="Forged Longsword", damage=random.randint(15, 20)): # Does a lot of damage
-        super().__init__(name, damage)
+    def __init__(self, name="Forged Longsword", damage=random.randint(10, 15), description="weapon"): # Does a lot of damage
+        super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
     
 class SmallKnife(Weapon): # small knife --------------------------------------------------------------------------------------------------------
-    def __init__(self, name="Small Knife", damage=5): # Small amount of damage but you throw multiple in one attack
-        super().__init__(name, damage)
+    def __init__(self, name="Small Knife", damage=5, description="weapon"): # Small amount of damage but you throw multiple in one attack
+        super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
 
 class SpikedClub(Weapon): # Spiked Club
-    def __init__(self, name="Spiked Club", damage=random.randint(10, 15)):
-        super().__init__(name, damage)
+    def __init__(self, name="Spiked Club", damage=random.randint(10, 15), description="weapon"):
+        super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
 
 class HealthPotion(Defence): # Health potion
-    def __init__(self, name="Health Potion", damage=-20): # Gives health
-        super().__init__(name, damage)
+    def __init__(self, name="Health Potion", damage=-20, description="potion"): # Gives health
+        super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
     
     def use_potion(self, player):
         player.remove_weapon(HealthPotion())
-        player.hp += self.damage
+        player.hp -= self.damage
+
+class BlockPotion(Defence):
+    def __init__(self, name="Block", damage=0, description="potion"):
+        super().__init__(name, damage, description)
+    
+    def __str__(self): # Used to display print statements correctly
+        return f"{self.name}"
+    
+    def use_potion(self):
+        pass
+
+class DoubleAttackPotion(Defence):
+    def __init__(self, name="Double Attack", damage=0, description="potion"):
+        super().__init__(name, damage, description)
+    
+    def __str__(self): # Used to display print statements correctly
+        return f"{self.name}"
+    
+    def use_potion(self):
+        pass
+
+class DoubleDamagePotion(Defence):
+    def __init__(self, name="Double Damage", damage=0, description="potion"):
+        super().__init__(name, damage, description)
+    
+    def __str__(self): # Used to display print statements correctly
+        return f"{self.name}"
+    
+    def use_potion(self):
+        pass
 
 class WoodenShield(Defence): # wooden shield
-    def __init__(self, name="Wooden Shield", damage=0): # Does no damage
+    def __init__(self, name="Wooden Shield", damage=0, description="defense"): # Does no damage
         super().__init__(name, damage)
 
     def __str__(self): # Used to display print statements correctly
@@ -183,30 +215,13 @@ class Goblin(Enemy): # Goblin enemy - hardest level
     def attack(self, character): # Goblin attacks the player
         damage = random.randint(15, 20)
         print(f"{self.name} attacks {character.name} for {damage} damage!")
-        for item in character.weapon_inventory: # If the player has a shield
-            if isinstance(item, WoodenShield):
-                item.defend(character)
-                break
+        if isinstance(character.defence_item, WoodenShield):
+            if character.defence_item.defend(character):
+                print("The shield blocked the attack!")
             else:
                 character.take_damage(damage)
-        
-        '''if WoodenShield() in character.weapon_inventory: # If the player has a shield
-            WoodenShield.defend(character)
-        
-        print("\nDo you wish to try and defend?")
-        print("\n1. Take damage")
-        print("2. Try and defend")
-        choice = input("Choose your action: ")
-        if choice == '1':
-            character.take_damage(damage)
-        elif choice == '2':
-            if random.randint(1, 4) == 1:
-                print(f"{character.name} defends the attack!")
-            else:
-                print("You failed to defend the attack!")
         else:
-            print("Invalid action. Please choose 1 or 2.")'''
-
+            character.take_damage(damage)
 
     def take_damage(self, damage): # Player attacks Goblin
         random_dodge = random.randint(1, 5) # 1 in 5 chance that the enemy doges the attack
@@ -244,29 +259,13 @@ class Troll(Enemy): # Troll enemy - meadium level
     def attack(self, character): # Troll attacks the player
         damage = random.randint(10, 15)
         print(f"{self.name} attacks {character.name} for {damage} damage!")
-        defended = False
-        for item in character.weapon_inventory: # If the player has a shield
-            if isinstance(item, WoodenShield):
-                defended = item.defend(character)
-                break
-        if not defended:
-            character.take_damage(damage)
-
-
-        '''print("\nDo you wish to try and defend?")
-        print("\n1. Take damage")
-        print("2. Try and defend")
-        choice = input("Choose your action: ")
-        if choice == '1':
-            character.take_damage(damage)
-        elif choice == '2':
-            if random.randint(1, 4) == 1:
-                print(f"{character.name} defends the attack!")
+        if isinstance(character.defence_item, WoodenShield):
+            if character.defence_item.defend(character):
+                print("The shield blocked the attack!")
             else:
-                print("\nYou failed to defend the attack!")
                 character.take_damage(damage)
         else:
-            print("Invalid action. Please choose 1 or 2.")'''
+            character.take_damage(damage)
 
     def take_damage(self, damage): # Player attacks troll
         self.hp -= damage
@@ -274,25 +273,67 @@ class Troll(Enemy): # Troll enemy - meadium level
 
     def enemy_drop(self, player): # Troll drops items when you defeat it (add random chance items) ---------------------------------------------------------------------
         print("\nThe troll has dropped some items:")
-        print("\nSpiked Club")
-        print("Troll Eyebalss")
-        print("\n1. Inspect items") # Inspect, accept or decline items
-        print("2. Accept items")
-        print("3. Decline items")
-        while True:
-            choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
-            if choice == "1":
-                print("\nSpiked Club - Wooden club with nails")
-                print("Troll Eyeballs - For crafting")
-            elif choice == "2":
-                player.add_item(Item("Spiked Club", "Wooden club with nails"))
-                player.add_item(Item("Troll Eyeballs", "For crafting"))
-                print("\nSuccess! Items added to your inventory.")
-                break
-            elif choice == "3":
-                break
-            else:
-                print("\nInvalid choice")
+        rarity = random.randint(1,8)
+        if rarity == 1:
+            print("\nTroll Socks")
+            print("Spiked Club")
+            print("\n1. Inspect items") # Inspect, accept or decline items
+            print("2. Accept items")
+            print("3. Decline items")
+            while True:
+                choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
+                if choice == "1":
+                    print("\nTroll Socks - For crafting")
+                    print("Spiked Club - Wooden club with nails")
+                elif choice == "2":
+                    player.add_item(Item("Troll Socks", "For crafting"))
+                    player.add_item(Item("Spiked Club", "Wooden club with nails"))
+                    print("\nSuccess! Items added to your inventory.")
+                    break
+                elif choice == "3":
+                    break
+                else:
+                    print("\nInvalid choice")
+        elif rarity == 2 or rarity == 3 or rarity == 4:
+            print("\nTroll Eyballs")
+            print("Spiked Club")
+            print("\n1. Inspect items") # Inspect, accept or decline items
+            print("2. Accept items")
+            print("3. Decline items")
+            while True:
+                choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
+                if choice == "1":
+                    print("\nTroll Socks - For crafting")
+                    print("Spiked Club - Wooden club with nails")
+                elif choice == "2":
+                    player.add_item(Item("Troll Eyeballs", "For crafting"))
+                    player.add_item(Item("Spiked Club", "Wooden club with nails"))
+                    print("\nSuccess! Items added to your inventory.")
+                    break
+                elif choice == "3":
+                    break
+                else:
+                    print("\nInvalid choice")
+        else:
+            print("\nRock")
+            print("Spiked Club")
+            print("\n1. Inspect items") # Inspect, accept or decline items
+            print("2. Accept items")
+            print("3. Decline items")
+            while True:
+                choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
+                if choice == "1":
+                    print("\nRock - For crafting")
+                    print("Spiked Club - Wooden club with nails")
+                elif choice == "2":
+                    player.add_item(Item("Rock", "For crafting"))
+                    player.add_item(Item("Spiked Club", "Wooden club with nails"))
+                    print("\nSuccess! Items added to your inventory.")
+                    break
+                elif choice == "3":
+                    break
+                else:
+                    print("\nInvalid choice")
 
     def unique_behaviour(self):
         pass
@@ -323,25 +364,50 @@ class Zombie(Enemy): # Zombie enemy - easy level
 
     def enemy_drop(self, player): # Zombie drops items when you defeat it
         print("\nThe zombie has dropped some items:")
-        print("\nSmall Knife")
-        print("Zombie Snot")
-        print("\n1. Inspect items") # Inspect, accept or decline items
-        print("2. Accept items")
-        print("3. Decline items")
-        while True:
-            choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
-            if choice == "1":
-                print("\nSmall Knife - Set of small throwing knives")
-                print("Zombie Snot - For crafting")
-            elif choice == "2":
-                player.add_weapon(SmallKnife())
-                player.add_item(Item("Zombie Snot", "For crafting"))
-                print("\nSuccess! Items added to your inventory.")
-                break
-            elif choice == "3":
-                break
-            else:
-                print("\nInvalid choice")
+        rarity = random.randint(1,4)
+        if rarity == 1:
+            print("\Zombie Leg")
+            print("Zombie Snot")
+            print("\n1. Inspect items") # Inspect, accept or decline items
+            print("2. Accept items")
+            print("3. Decline items")
+            while True:
+                choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
+                if choice == "1":
+                    print("\nZombie Leg - For crafting")
+                    print("Zombie Snot - For crafting")
+                elif choice == "2":
+                    player.add_item(Item("Zombie Leg", "For crafting"))
+                    player.add_item(Item("Zombie Snot", "For crafting"))
+                    print("\nSuccess! Items added to your inventory.")
+                    break
+                elif choice == "3":
+                    break
+                else:
+                    print("\nInvalid choice")
+        else:
+            print("\nSmall Knife")
+            print("Zombie Snot")
+            print("Rope")
+            print("\n1. Inspect items") # Inspect, accept or decline items
+            print("2. Accept items")
+            print("3. Decline items")
+            while True:
+                choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
+                if choice == "1":
+                    print("\nSmall Knife - Set of small throwing knives")
+                    print("Zombie Snot - For crafting")
+                    print("Rope - For crafting")
+                elif choice == "2":
+                    player.add_weapon(SmallKnife())
+                    player.add_item(Item("Zombie Snot", "For crafting"))
+                    player.add_item(Item("Rope", "For crafting"))
+                    print("\nSuccess! Items added to your inventory.")
+                    break
+                elif choice == "3":
+                    break
+                else:
+                    print("\nInvalid choice")
 
     def unique_behaviour(self):
         pass
@@ -367,6 +433,15 @@ class Crafting:
         print("\n4. Health Potion - Increases your health by 20hp")
         print("     - Zombie Snot x1")
         print("     - Troll Eyeballs x1")
+        print("\n5. Double Attack Potion- Allows you to have two turns attacking")
+        print("     - Troll Socks x1")
+        print("     - Rope x1")
+        print("\n6. Double Damage Potion- Doubles the damage of your weapon for one turn")
+        print("     - Zombie leg x1")
+        print("     - Stick x1")
+        print("\n7. Block Potion- Block the enemys attack")
+        print("     - Zombie Snot x1")
+        print("     - Rock x1")
 
     def craft1(self, player): # Crafts a wooden sword, adds to inventory and removes the items you used
         player.add_weapon(WoodenSword())
@@ -381,50 +456,89 @@ class Crafting:
         player.remove_item(Item("Rock", "For crafting"))
         player.remove_item(Item("Rope", "For crafting"))
         print("\nSuccess!")
-        print("A Wooden Shield was added to your invertory")
+        print("A Wooden Shield was added to your inventory")
 
     def craft3(self, player): # Crafts a forged longsword, adds to inventory and removes the items you used
         player.add_weapon(ForgedLongsword())
         player.remove_item(Item("Iron Ingot", "For crafting"))
         player.remove_item(Item("Rope", "For crafting"))
         print("\nSuccess!")
-        print("A Forged Longsword was added to your weapons invertory")
+        print("A Forged Longsword was added to your weapons inventory")
 
     def craft4(self, player): # Crafts a health potion, adds to inventory and removes the items you used
         player.add_weapon(HealthPotion())
         player.remove_item(Item("Zombie Snot", "For crafting"))
         player.remove_item(Item("Troll Eyeballs", "For crafting"))
         print("\nSuccess!")
-        print("A Health Potion was added to your invertory")
+        print("A Health Potion was added to your inventory")
+
+    def craft5(self, player): # Crafts a double attack, adds to inventory and removes the items you used
+        player.add_weapon(DoubleAttackPotion())
+        player.remove_item(Item("Troll Socks", "For crafting"))
+        player.remove_item(Item("Rope", "For crafting"))
+        print("\nSuccess!")
+        print("A Double Attack was added to your inventory")
+
+    def craft6(self, player): # Crafts a double damage, adds to inventory and removes the items you used
+        player.add_weapon(DoubleDamagePotion())
+        player.remove_item(Item("Zombie Leg", "For crafting"))
+        player.remove_item(Item("Stick", "For crafting"))
+        print("\nSuccess!")
+        print("A Double Damage was added to your inventory")
+
+    def craft7(self, player): # Crafts a block, adds to inventory and removes the items you used
+        player.add_weapon(BlockPotion())
+        player.remove_item(Item("Zombie Snot", "For crafting"))
+        player.remove_item(Item("Rock", "For crafting"))
+        print("\nSuccess!")
+        print("A Block was added to your inventory")
 
     def craft_menu(self, player): # Crafting menu so players can choose what to craft
         while True:
-            craft_choice = input("\nPlease choose which item you wish to craft (1,2,3 or 4) or type 5 to cancel craft:")
-            if craft_choice == "1" or craft_choice == "one":
+            craft_choice = input("\nPlease choose which item you wish to craft or type 8 to cancel craft:")
+            if craft_choice == "1": # Player craft wooden sword
                 if Item("Stick", "For crafting") in player.craft_inventory and Item("Rope", "For crafting") in player.craft_inventory:
                     self.craft1(player)
                     break
                 else:
                     print("\nYou do not have the correct items to craft this")
-            elif craft_choice == "2" or craft_choice == "two":
+            elif craft_choice == "2": # Player crafts wooden shield
                 if Item("Rock", "For crafting") in player.craft_inventory and Item("Rope", "For crafting") in player.craft_inventory:
                     self.craft2(player)
                     break
                 else:
                     print("\nYou do not have the correct items to craft this")
-            elif craft_choice == "3" or craft_choice == "three":
+            elif craft_choice == "3": # Player crafts forged longsword
                 if Item("Iron Ingot", "For crafting") in player.craft_inventory and Item("Rope", "For crafting") in player.craft_inventory:
                     self.craft3(player)
                     break
                 else:
                     print("\nYou do not have the correct items to craft this")
-            elif craft_choice == "4" or craft_choice == "four":
+            elif craft_choice == "4": # Player crafts health potion
                 if Item("Zombie Snot", "For crafting") in player.craft_inventory and Item("Troll Eyeballs", "For crafting") in player.craft_inventory:
                     self.craft4(player)
                     break
                 else:
                     print("\nYou do not have the correct items to craft this")
-            elif craft_choice == "5" or craft_choice == "five": # Option to close the craft menu and go back to fighting
+            elif craft_choice == "5": # Player crafts double attack potion
+                if Item("Troll Socks", "For crafting") in player.craft_inventory and Item("Rope", "For crafting") in player.craft_inventory:
+                    self.craft5(player)
+                    break
+                else:
+                    print("\nYou do not have the correct items to craft this")
+            elif craft_choice == "6": # PLayer crafts double damage potion
+                if Item("Zombie Leg", "For crafting") in player.craft_inventory and Item("Stick", "For crafting") in player.craft_inventory:
+                    self.craft6(player)
+                    break
+                else:
+                    print("\nYou do not have the correct items to craft this")
+            elif craft_choice == "7": # Player crafts block potion
+                if Item("Zombie Snot", "For crafting") in player.craft_inventory and Item("Rock", "For crafting") in player.craft_inventory:
+                    self.craft7(player)
+                    break
+                else:
+                    print("\nYou do not have the correct items to craft this")
+            elif craft_choice == "8": # Option to close the craft menu and go back to fighting
                 player.add_weapon(BareHands())
                 print("Exiting craft menu")
                 break
@@ -452,7 +566,7 @@ def combat(player, enemy):
                 weapon.equip_weapon(player)
             player.attack(enemy)
         elif action == "2": # Allows player to equip items or use potions
-            option = input("Would like to 1 - equip an item or 2 - use a potion: ")
+            option = input("\nWould like to 1 equip an item or 2 use a potion: ")
             if option == "1":
                 player.show_weapon_inventory()
                 while True:
@@ -473,10 +587,17 @@ def combat(player, enemy):
                         print("\nInvalid choice")
                 continue # Skip enemy turn to allow further action after equipping a weapon.
             elif option == "2":
-                potion = HealthPotion()
+                for item in player.weapon_inventory:
+                    if item.description == "potion":
+                        print(item.name)
+                        #potion = input("Which of your potions would youi like to use:")
+                    else:
+                        print("\nYou do not have any potions to use")
+
+                '''potion = HealthPotion()
                 potion.use_potion(player)
-                '''defence = Defence()
-                defence.use_potion(player)'''
+                print(player.hp)'''
+                continue # Skip enemy turn to allow further action after using a potion.
         elif action == '3': # Shows players inventory
             player.show_craft_inventory()
             player.show_weapon_inventory()
