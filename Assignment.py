@@ -1,6 +1,6 @@
 import random
 
-# Item class defining how items will be stored and displyed if printed
+# Item class defining how items will be stored and displyed nicely if printed
 class Item:
     def __init__(self, name, description=""):
         self.name = name
@@ -23,19 +23,41 @@ class Character:
         self.craft_inventory = []  # Craft inventory now holds Item objects
         self.weapon_inventory = [] # Weapon now holds weapon objects
         self.equipped_weapon = None # No wepons equipped initialy
-        self.defence_item = [] # No defensive items eqipped initialy
+        self.defence_item = None # No defensive items eqipped initialy
 
     def is_alive(self): # Returs weather the player is alive or not
         return self.hp > 0
 
     def attack(self, enemy): # Player attacks an enemy
-        damage = self.equipped_weapon.damage # Damage depends on which weapon is equipped
-        print(f"{self.name} attacks {enemy.name} for {damage} damage!")
-        enemy.take_damage(damage) # Enemy takes damage
+        if self.equipped_weapon.name == "Throwing Knives": # If you are using throwing knives
+            hits = random.randint(1, 5) # Decides how many of your knives will hit the enemy
+            damage = hits * 5
+            print(f"{self.name} hits enemy with {hits}/5 knives!") # Display how many knives hit
+            print(f"Total damage of {damage}")
+            enemy.take_damage(damage) # Enemy takes damage
+        elif self.defence_item is not None and self.defence_item.name == "Double Damage": # Enemy gets twice as much damage
+            damage = self.equipped_weapon.damage
+            new_damage = damage * 2 # TImes original damage by two
+            print(f"\n{self.name} attacks {enemy.name} for {damage} damage!")
+            print(f"{self.name} has doubled the attack!")
+            print(f"New damage is now {new_damage}")
+            enemy.take_damage(new_damage) # Enemy takes damage
+            self.defence_item = None
+        elif self.defence_item is not None and self.defence_item.name == "Double Attack": # Player attack twice
+            ##skip enemy turn
+            pass
+        else:
+            damage = self.equipped_weapon.damage # Damage depends on which weapon is equipped
+            print(f"\n{self.name} attacks {enemy.name} for {damage} damage!")
+            enemy.take_damage(damage) # Enemy takes damage
 
     def take_damage(self, damage): # Player takes damage
-        self.hp -= damage # Player health goes down
-        print(f"{self.name} takes {damage} damage! (HP: {self.hp})")
+        if self.defence_item is not None and self.defence_item.name == "Block": # If player has a block equipped
+            print(f"{self.name} has blocked the enemys attack!")
+            self.defence_item = None
+        else:
+            self.hp -= damage # Player health goes down
+            print(f"{self.name} takes {damage} damage! (HP: {self.hp})")
 
     def add_item(self, item): # Add a craft item to the craft inventory
         self.craft_inventory.append(item)
@@ -66,15 +88,18 @@ class Character:
             print("  (empty)") # Shows if the inventory is empty
         else:
             for item in self.weapon_inventory:
-                print(f"  - {item.name}")
+                if item.name == "Throwing Knives":
+                    print(f" - {item.name} does {item.damage} for every knife the hits the enemy")
+                else:
+                    print(f"  - {item.name} does {item.damage} damage")
 
     def show_equipped_items(self): # Displays items that the player has equipped
         if self.equipped_weapon is None:
-            print("No weapon equipped") # If there are no weapons equipped
+            print("\nNo weapon equipped") # If there are no weapons equipped
         else:
             print(f"\nYou curently have {self.equipped_weapon} equipped")
         
-        if len(self.defence_item) == 0:
+        if self.defence_item == None:
             print("No defensive item equipped") # If there are no defensive items equipped
         else:
             print(f"You currently have {self.defence_item} equipped")
@@ -91,7 +116,6 @@ class Weapon:
 
     def equip_weapon(self, player): # Equips the weapon so the player can use it
         player.equipped_weapon = self
-        print(f"\nYou have the {self.name} equipped.")
 
 # Class for defensive items
 class Defence:
@@ -129,8 +153,8 @@ class ForgedLongsword(Weapon): # Forged longsword
     def __str__(self): # Used to display print statements correctly
         return f"{self.name}"
     
-class SmallKnife(Weapon): # Small Knife
-    def __init__(self, name="Small Knife", damage=4, description="weapon"): # Small amount of damage but you throw 5 in one attack
+class TrowingKnives(Weapon): # Set of 5 Throwing Knives
+    def __init__(self, name="Throwing Knives", damage=5, description="weapon"): # Small amount of damage but you throw 5 in one attack
         super().__init__(name, damage, description)
 
     def __str__(self): # Used to display print statements correctly
@@ -214,7 +238,7 @@ class Goblin(Enemy): # Goblin enemy - hardest level
 
     def attack(self, character): # Goblin attacks the player
         damage = random.randint(15, 20)
-        print(f"{self.name} attacks {character.name} for {damage} damage!")
+        print(f"\n{self.name} attacks {character.name} for {damage} damage!")
         if isinstance(character.defence_item, WoodenShield):
             if character.defence_item.defend(character):
                 print("The shield blocked the attack!")
@@ -258,7 +282,7 @@ class Troll(Enemy): # Troll enemy - meadium level
 
     def attack(self, character): # Troll attacks the player
         damage = random.randint(10, 15)
-        print(f"{self.name} attacks {character.name} for {damage} damage!")
+        print(f"\n{self.name} attacks {character.name} for {damage} damage!")
         if isinstance(character.defence_item, WoodenShield):
             if character.defence_item.defend(character):
                 print("The shield blocked the attack!")
@@ -355,7 +379,7 @@ class Zombie(Enemy): # Zombie enemy - easy level
 
     def attack(self, character): # Zombie attacks player
         damage = random.randint(5, 10)
-        print(f"{self.name} attacks {character.name} for {damage} damage!")
+        print(f"\n{self.name} attacks {character.name} for {damage} damage!")
         character.take_damage(damage)
 
     def take_damage(self, damage): # Player attacks zombie
@@ -386,7 +410,7 @@ class Zombie(Enemy): # Zombie enemy - easy level
                 else:
                     print("\nInvalid choice")
         else:
-            print("\nSmall Knife")
+            print("\nThrowing Knives")
             print("Zombie Snot")
             print("Rope")
             print("\n1. Inspect items") # Inspect, accept or decline items
@@ -395,11 +419,11 @@ class Zombie(Enemy): # Zombie enemy - easy level
             while True:
                 choice = input("\nChoose what you would lke to do with the items:") # Player chooses what to do
                 if choice == "1":
-                    print("\nSmall Knife - Set of small throwing knives")
+                    print("\Throwing Knives - Set of 5 small throwing knives")
                     print("Zombie Snot - For crafting")
                     print("Rope - For crafting")
                 elif choice == "2":
-                    player.add_weapon(SmallKnife())
+                    player.add_weapon(TrowingKnives())
                     player.add_item(Item("Zombie Snot", "For crafting"))
                     player.add_item(Item("Rope", "For crafting"))
                     print("\nSuccess! Items added to your inventory.")
@@ -420,7 +444,7 @@ class Zombie(Enemy): # Zombie enemy - easy level
 # Class for crafting weapons and defensive items
 class Crafting:
     def show_recipes(self): # Displays a list of craftable items and the "ingredients"
-        print("\nHere is a list of craftible items:")
+        print("\nHere is the craft menu:")
         print("\n1. Wooden Sword - Does up to 15 damage")
         print("     - Stick x1")
         print("     - Rope x1")
@@ -587,17 +611,28 @@ def combat(player, enemy):
                         print("\nInvalid choice")
                 continue # Skip enemy turn to allow further action after equipping a weapon.
             elif option == "2":
-                for item in player.weapon_inventory:
-                    if item.description == "potion":
-                        print(item.name)
-                        #potion = input("Which of your potions would youi like to use:")
-                    else:
-                        print("\nYou do not have any potions to use")
+                potions = [item.name for item in player.weapon_inventory if item.description == "potion"]
+                if potions:
+                    print("\nYour potions")
+                    for name in potions:
+                        print(name)
+                    while True:
+                        potion = input("\nWhich potion would you like to use (or cancel): ").strip().title()
+                        if potion == "Cancel":
+                            print("Cancelling potion use")
+                            break
+                        for item in player.weapon_inventory:
+                            if item.name == potion:
+                                item.equip_defence(player)
+                                break
+                        else:
+                            print("No such potion found. Try again")
+                            continue
+                        break
+                else:
+                    print("\nYou do not have any potions to use")
+                continue
 
-                '''potion = HealthPotion()
-                potion.use_potion(player)
-                print(player.hp)'''
-                continue # Skip enemy turn to allow further action after using a potion.
         elif action == '3': # Shows players inventory
             player.show_craft_inventory()
             player.show_weapon_inventory()
@@ -647,9 +682,12 @@ def main_menu():
             crafter.show_recipes()
             player.show_craft_inventory()
             crafter.craft_menu(player)
+            player.add_weapon(DoubleDamagePotion())
             combat(player, Zombie()) # Fight with each enemy
-            combat(player, Troll())
-            combat(player, Goblin())
+            if player.is_alive:
+                combat(player, Troll())
+            if player.is_alive:
+                combat(player, Goblin())
         elif choice == "2": # Save data to a file
             pass
         elif choice == "3": # Exit game
