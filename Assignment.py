@@ -446,7 +446,7 @@ class Crafting:
         print("\n6. Block Potion- Block the enemies attack")
         print("     - Zombie Snot x1")
         print("     - Rock x1")
-        print("\n8. Cancel craft")
+        print("\n7. Cancel craft")
 
     def craft1(self, player): # Crafts a wooden sword, adds to inventory and removes the items you used
         player.add_weapon(WoodenSword())
@@ -477,14 +477,14 @@ class Crafting:
         print("\nSuccess!")
         print("A Health Potion was added to your inventory")
 
-    def craft6(self, player): # Crafts a double damage, adds to inventory and removes the items you used
+    def craft5(self, player): # Crafts a double damage, adds to inventory and removes the items you used
         player.add_weapon(DoubleDamagePotion())
         player.remove_item(Item("Zombie Leg", "For crafting"))
         player.remove_item(Item("Stick", "For crafting"))
         print("\nSuccess!")
         print("A Double Damage was added to your inventory")
 
-    def craft7(self, player): # Crafts a block, adds to inventory and removes the items you used
+    def craft6(self, player): # Crafts a block, adds to inventory and removes the items you used
         player.add_weapon(BlockPotion())
         player.remove_item(Item("Zombie Snot", "For crafting"))
         player.remove_item(Item("Rock", "For crafting"))
@@ -493,7 +493,7 @@ class Crafting:
 
     def craft_menu(self, player): # Crafting menu so players can choose what to craft
         while True:
-            craft_choice = input("\nPlease choose which item you wish to craft or type 8 to cancel craft:")
+            craft_choice = input("\nPlease choose which item you wish to craft or type 7 to cancel craft:")
             if craft_choice == "1": # Player craft wooden sword
                 if Item("Stick", "For crafting") in player.craft_inventory and Item("Rope", "For crafting") in player.craft_inventory:
                     self.craft1(player)
@@ -520,13 +520,13 @@ class Crafting:
                     print("\nYou do not have the correct items to craft this")
             elif craft_choice == "5": # PLayer crafts double damage potion
                 if Item("Zombie Leg", "For crafting") in player.craft_inventory and Item("Stick", "For crafting") in player.craft_inventory:
-                    self.craft6(player)
+                    self.craft5(player)
                     break
                 else:
                     print("\nYou do not have the correct items to craft this")
             elif craft_choice == "6": # Player crafts block potion
                 if Item("Zombie Snot", "For crafting") in player.craft_inventory and Item("Rock", "For crafting") in player.craft_inventory:
-                    self.craft7(player)
+                    self.craft6(player)
                     break
                 else:
                     print("\nYou do not have the correct items to craft this")
